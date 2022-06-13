@@ -1,0 +1,19 @@
+{
+  "name": "csv-to-json",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "csvToJson": "node app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KaroW97/csv-to-json.git"
+  },
+  "author": "Karolina Wiaderek",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KaroW97/csv-to-json/issues"
+  },
+  "homepage": "https://github.com/KaroW97/csv-to-json#readme"
+}
