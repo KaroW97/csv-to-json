@@ -1,21 +1,18 @@
-const { readFile } = require('./helpers/commonFunctions')
-
-const acceptedInputs = ['sourceFile', 'resultFile', 'separator']
-
-const [
-  input,
-  inputPath,
-  output,
-  outputPath,
-  separator,
-  separatorType] = process.argv.slice(2) || {}
-
-console.log(process.argv.slice(2));
+const { transformToJSON } = require('./handlers/parentProcessFile')
+const { validation } = require('./utils/validation')
 
 const main = async () => {
-  console.log(await readFile(inputPath));
+  console.time('READING')
+  try {
+    validation()
+
+    await transformToJSON()
+
+
+  } catch (error) {
+    console.error(error)
+  }
+  console.timeEnd('READING')
 }
 
-
 main()
-

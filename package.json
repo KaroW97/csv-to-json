@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "csvToJson": "node app"
+    "csvToJson": "node app",
+    "lint": "eslint -c @eslintrc/.eslintrc.js **/*.js --fix"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/KaroW97/csv-to-json/issues"
   },
-  "homepage": "https://github.com/KaroW97/csv-to-json#readme"
+  "homepage": "https://github.com/KaroW97/csv-to-json#readme",
+  "dependencies": {
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0"
+  }
 }
