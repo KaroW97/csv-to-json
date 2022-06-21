@@ -3,7 +3,7 @@ const DEFAULT = 'auto-detect'
 
 const getAllInputs = () => process.argv.slice(2) || {}
 
-const getSeparatorType = () => getAllInputs()[5]
+const getSeparatorType = () => getAllInputs()[5] || null
 
 const getUserInputs = () => {
   const [input, inputPath, output, outputPath, separator, separatorType] = getAllInputs()
