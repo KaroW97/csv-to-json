@@ -1,39 +1,108 @@
-const { VALID_SEPARATORS } = require("./common")
+const { VALID_SEPARATORS, getSeparatorType } = require("./common")
 
-const splitToRows = data => data.split('\n')
-
-/**
- *
- * @param {string[]} data
- * @param {string} separator
- */
-const getHeaders = (data, separator) => data[0].split(separator)
-
-const parseToJSON = ({ rest, header }) => rest.map(row => {
-  return header.reduce((prev, current, index) => ({
-    ...prev,
-    [`${current.trim()}`]: typeof row[index] === 'string' ? row[index].trim() : row[index]
-  }), {})
-})
-
-const createTempObject = (rows, separator) => {
-  return {
-    rest: rows.map(rowElement => rowElement.split(separator))
+module.exports = class Parser {
+  constructor() {
+    this.header = undefined
+    this.separator = undefined
+    this.checkIfFirst = true
+    this.unprocessed = ''
   }
-}
 
-const checkSeparator = (row, separatorType) => {
-  if (!separatorType) {
-    const separatorIndex = VALID_SEPARATORS.findIndex(element => !row[0].length ? row[1].includes(element) : row[0].includes(element))
-    return VALID_SEPARATORS[separatorIndex]
+  /**
+   * Splitting string to an array of strings
+   * @param {string} data
+   * @returns {string[]}
+   */
+  splitToRows(data) {
+    return data.split('\n')
   }
-  return separatorType
-}
 
-module.exports = {
-  getHeaders,
-  splitToRows,
-  parseToJSON,
-  createTempObject,
-  checkSeparator
+  /**
+   * Extracting header if its first iteration
+   * @param {string[]} data
+   */
+  setHeader(data) {
+    this.header = data[0].split(this.separator)
+  }
+
+  /**
+   *
+   * @param {Record<string, number>[]} json
+   * @returns {string}
+   */
+  deleteBrackets(json) {
+    return JSON.stringify(json).replace(/[\[\]']+/g, '')
+  }
+
+  /**
+   * Attaches value to correct header
+   * Deletes extra brackets from array
+   * Adds comma at the beginning of the string if its not first iteration
+   * @param {string[]} rows
+   * @returns {string}
+   */
+  parseToJSON(rows) {
+    const rest = this.createTempObject(rows)
+
+    const json = rest.map(row => {
+      return this.header.reduce((prev, current, index) => {
+        let value = undefined
+        if (typeof row[index] === 'string') value = row[index].trim()
+        if (!isNaN(row[index])) value = Number(row[index])
+        return {
+          ...prev,
+          [`${current.trim()}`]: value
+        }
+      }, {})
+    })
+
+    const deleteBrackets = this.deleteBrackets(json)
+
+    return this.getIfFirst() ? deleteBrackets : ', ' + deleteBrackets
+  }
+
+  /**
+   * Creates map of elements splitted when correct separator occurs
+   * @param {string[]} rows
+   * @returns {string[]}
+   */
+  createTempObject(rows) {
+    const splitIfHeader = this.checkIfFirst ? rows.splice(1) : rows
+    return splitIfHeader.map(rowElement => rowElement.split(this.separator))
+  }
+
+  /**
+   * Returns separator type if it was passed explicitly
+   * If not searches for the index of the separator in provided header
+   * @param {string[]} row
+   * @param {string | undefined} separatorType
+   */
+  setSeparator(header, separatorType = null) {
+    let separatorIndex = 0;
+
+    if (!separatorType)
+      separatorIndex = VALID_SEPARATORS.findIndex(separators => header.includes(separators))
+
+    this.separator = separatorType ?? VALID_SEPARATORS[separatorIndex]
+  }
+
+  getSeparator() {
+    return this.separator
+  }
+
+  setIfFirst() {
+    this.checkIfFirst = false
+  }
+
+  getIfFirst() {
+    return this.checkIfFirst
+  }
+
+  setUnprocessed(value) {
+    this.unprocessed = value
+  }
+
+  getUnprocessed() {
+    return this.unprocessed
+  }
 }

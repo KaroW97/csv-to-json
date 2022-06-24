@@ -1,36 +1,25 @@
 const fs = require('fs');
-const { transform } = require('./transform');
-const readline = require('readline')
+const { transform, setInitialSeparator } = require('./transform');
 
-const transformStream = async (inputPath, outputPath) => {
-
-  const fileStream = fs.createReadStream(inputPath, { highWaterMark: 150 });
+const transformStream = async ({ inputPath, outputPath, separatorType }) => {
+  const fileStream = fs.createReadStream(inputPath, { encoding: 'utf-8' })
   const transformedData = fs.createWriteStream(outputPath, { flags: 'a' })
 
   transformedData.write('[')
-  /*  const readFile = readline.createInterface({
-     input: fs.createReadStream(inputPath),
-     output: fs.createWriteStream(outputPath, { flags: 'a' }),
-     terminal: false
-   });
 
-   readFile
-     .on('line', line => {
-       transform._write(line)
-     })
-     .on('close', function () {
-       /// console.log(`Created "${this.output.path}"`);
-     }); */
+  if (separatorType)
+    setInitialSeparator(separatorType)
+
   fileStream.pipe(transform).pipe(transformedData)
 
   return new Promise((resolve, rejects) => {
-    transformedData.on('close', () => resolve(true))
+    transformedData.on('close', async () => resolve(true))
     transformedData.on('error', error => rejects(error))
   })
 }
 
-process.on('message', async ({ inputPath, outputPath }) => {
-  const data = await transformStream(inputPath, outputPath)
+process.on('message', async (inputs) => {
+  const data = await transformStream(inputs)
   process.send(data)
   process.exit()
 })
