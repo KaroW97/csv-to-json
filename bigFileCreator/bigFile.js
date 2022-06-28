@@ -1,43 +1,63 @@
 const fs = require('fs');
-const FILE_NAME = 'testData/testBig.csv'
+const FILE_NAME = 'testBig.csv'
 const { fork } = require('child_process');
-let transformedData = fs.createWriteStream(FILE_NAME, { flags: 'a' })
+const { checkIfExists } = require('../utils/common');
+const { checkExtension } = require('../utils/validation');
 
 let child = fork('bigFileCreator/child')
-child.setMaxListeners(40)
-const callChild = async () => {
+
+child.setMaxListeners(50)
+
+/**
+ * Calls child and waits till the data is written to the file
+ * @param {fs.WriteStream} transformedData
+ * @returns {Promise<void>}
+ */
+const callChild = async (transformedData) => {
   child.send('start')
+
   return new Promise(resolve => {
-    child.on('message', async (data) => resolve(data))
+    child.on('message', async (data) => resolve(transformedData.write(data)))
   })
 }
 
-async function write() {
-  console.time('TEST');
-  for (let i = 0; i < 1e6; i++) {
-    const data = await callChild()
+/**
+* Function is responsible for writing to a file till it's size reaches expected range
+ * After every iteration we check the size of the file
+ * @param {string} fileName
+ * @param {fs.WriteStream} transformedData
+ */
+async function write(fileName = FILE_NAME, transformedData) {
+  let size = (await fs.promises.stat(fileName)).size
 
-    const ableToWrite = transformedData.write(data);
-    if (!ableToWrite) {
-      await new Promise(resolve => {
-        transformedData.once('drain', resolve);
-      });
-    }
-    const size = (await fs.promises.stat(FILE_NAME)).size
-    if ((size / 1e6) > 10000)
-      break;
-    if (child.listenerCount('message') === child.getMaxListeners()) {
-      child.send(true)
-      child = fork('bigFileCreator/child')
-    }
+  while ((size / 1e6) <= 10000) {
+    await callChild(transformedData)
+
+    size = (await fs.promises.stat(fileName)).size
   }
-  console.timeEnd('TEST');
-  console.log('JESTE,');
   child.send(true)
 }
 
-
+/**
+ * Main function which initialize whole work.
+ * We need to use setTimeout to wait till the file is created
+ * Else we will get error
+ */
 (async () => {
+  const fileName = process.argv.splice(2)[0]
+
+  if (fileName)
+    checkExtension(fileName)
+
+  let transformedData = fs.createWriteStream(fileName ?? FILE_NAME, { flags: 'a' })
+
   transformedData.write('cdatetime, address, district, beat, grid, crimedescr, ucr_ncic_code, latitude, longitude' + '\r\n')
-  await write()
+
+  setTimeout(async () => {
+    const ifExists = await checkIfExists(fileName ?? FILE_NAME)
+
+    if (ifExists)
+      await write(fileName, transformedData)
+
+  }, 1000)
 })()

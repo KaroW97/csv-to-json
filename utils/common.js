@@ -1,26 +1,30 @@
 const VALID_SEPARATORS = ['  ', ',', ';']
-const DEFAULT = 'auto-detect'
+const fs = require('fs');
 
 const getAllInputs = () => process.argv.slice(2) || {}
 
-const getSeparatorType = () => {
+const getUserInputs = () => {
+  const userInputs = getAllInputs().filter((element, index) => index % 2 == 1)
 
-  return getAllInputs()[5]
+  return {
+    inputPath: userInputs[0],
+    outputPath: userInputs[1],
+    separatorType: userInputs[2],
+  }
 }
 
-const getUserInputs = () => {
-  const [input, inputPath, output, outputPath, separator, separatorType] = getAllInputs()
-  return {
-    inputPath,
-    outputPath,
-    separatorType,
+const checkIfExists = async (fileName) => {
+  try {
+    await fs.promises.access(fileName)
+    return true
+  } catch (err) {
+    return false
   }
 }
 
 module.exports = {
   VALID_SEPARATORS,
-  DEFAULT,
   getAllInputs,
-  getSeparatorType,
-  getUserInputs
+  getUserInputs,
+  checkIfExists
 }

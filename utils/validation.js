@@ -1,6 +1,6 @@
 const { VALID_SEPARATORS, getAllInputs } = require("./common")
 
-const notAccepted = ['--sourceFile', '--resultFile', '--separator']
+const notAcceptedWhenInput = ['--sourceFile', '--resultFile', '--separator']
 
 const accepted = {
   sourceFile: '--sourceFile',
@@ -19,11 +19,19 @@ exports.validation = () => {
     throw new Error(`The tag is incorrect expected ${!input ? accepted.sourceFile : accepted.resultFile}`)
 
   if (!inputPath) throw new Error('No input path provided')
-  if (inputPath && notAccepted.includes(inputPath)) throw new Error('Incorrect format')
+  if (inputPath && notAcceptedWhenInput.includes(inputPath)) throw new Error('Incorrect format')
 
   if (!outputPath) throw new Error('No output path provided')
-  if (outputPath && notAccepted.includes(inputPath)) throw new Error('Incorrect format')
+  if (outputPath && notAcceptedWhenInput.includes(inputPath)) throw new Error('Incorrect format')
 
   if (separator && !separatorType) throw new Error('Requested for different separator. But type was not passed')
   if (separator && !VALID_SEPARATORS.includes(separatorType)) throw new Error('Provided separator is not supported')
+}
+
+/**
+ * Checks if passed file contains proper extension
+ * @param {string} fileName
+ */
+exports.checkExtension = (fileName) => {
+  if (!fileName.includes('.csv')) throw new Error('Wrong extension')
 }

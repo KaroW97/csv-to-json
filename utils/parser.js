@@ -1,4 +1,4 @@
-const { VALID_SEPARATORS, getSeparatorType } = require("./common")
+const { VALID_SEPARATORS } = require("./common")
 
 module.exports = class Parser {
   constructor() {
@@ -35,6 +35,16 @@ module.exports = class Parser {
   }
 
   /**
+   * Creates map of elements splitted when correct separator occurs
+   * @param {string[]} rows
+   * @returns {string[]}
+   */
+  createTempObject(rows) {
+    const splitIfHeader = this.checkIfFirst ? rows.splice(1) : rows
+    return splitIfHeader.map(rowElement => rowElement.split(this.separator))
+  }
+
+  /**
    * Attaches value to correct header
    * Deletes extra brackets from array
    * Adds comma at the beginning of the string if its not first iteration
@@ -58,17 +68,7 @@ module.exports = class Parser {
 
     const deleteBrackets = this.deleteBrackets(json)
 
-    return this.getIfFirst() ? deleteBrackets : ', ' + deleteBrackets
-  }
-
-  /**
-   * Creates map of elements splitted when correct separator occurs
-   * @param {string[]} rows
-   * @returns {string[]}
-   */
-  createTempObject(rows) {
-    const splitIfHeader = this.checkIfFirst ? rows.splice(1) : rows
-    return splitIfHeader.map(rowElement => rowElement.split(this.separator))
+    return this.getIfFirst() ? '[' + deleteBrackets : ', ' + deleteBrackets
   }
 
   /**
@@ -77,7 +77,7 @@ module.exports = class Parser {
    * @param {string[]} row
    * @param {string | undefined} separatorType
    */
-  setSeparator(header, separatorType = null) {
+  setSeparator(header, separatorType = this.getSeparator()) {
     let separatorIndex = 0;
 
     if (!separatorType)

@@ -1,10 +1,14 @@
 const { Chance } = require('chance');
 const chance = Chance()
 
+/**
+ * Function create array with random strings, then joins them into a string
+ * @returns {string}
+ */
 const createRandomRow = () => {
   let tempArray = []
 
-  for (let i = 0; i < 6e4; i++) {
+  for (let i = 0; i < 9e4; i++) {
     const date = chance.date({ string: true }) + ' ' + chance.date().toISOString().split('.')[0].split('T')[1]
     const address = chance.address()
     const district = chance.natural({ min: 1, max: 20 })
@@ -19,8 +23,10 @@ const createRandomRow = () => {
   }
   return tempArray.join('')
 }
+
 process.on('message', (whenToClose) => {
   const response = createRandomRow()
+
   process.send(response)
 
   if (whenToClose === true)

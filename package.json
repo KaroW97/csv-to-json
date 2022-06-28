@@ -6,6 +6,7 @@
   "scripts": {
     "csvToJson": "node app",
     "bigFile": "node ./bigFileCreator/bigFile",
+    "save-google-drive": "node ./google/googleApi",
     "lint": "eslint -c @eslintrc/.eslintrc.js **/*.js --fix"
   },
   "repository": {
@@ -20,7 +21,10 @@
   "homepage": "https://github.com/KaroW97/csv-to-json#readme",
   "dependencies": {
     "chance": "^1.1.8",
+    "dotenv": "^16.0.1",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0"
+    "eslint-plugin-prettier": "^4.0.0",
+    "google-auth-library": "^8.0.3",
+    "googleapis": "^39.2.0"
   }
 }
