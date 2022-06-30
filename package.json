@@ -1,13 +1,12 @@
 {
   "name": "csv-json-parser-module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "cSV to JSON parser",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js",
-    "csv-to-json": "node ./csvToJSON/csvParser",
-    "random-big-file": "node ./bigFileCreator/bigFile",
-    "save-google-drive": "node ./google/googleApi",
+    "csv-to-json": "node index.js",
+    "random-big-file": "node index.js",
+    "save-google-drive": "node index.js",
     "lint": "eslint -c @eslintrc/.eslintrc.js **/*.js --fix"
   },
   "repository": {
@@ -26,6 +25,6 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "google-auth-library": "^8.0.3",
-    "googleapis": "^39.2.0"
+    "googleapis": "^104.0.0"
   }
 }

@@ -46,7 +46,7 @@ async function write(filePath = FILE_NAME, transformedData, fileSize = 10) {
  * We need to use setTimeout to wait till the file is created
  * Else we will get error
  */
-; (async () => {
+;(async () => {
   try {
     const { filePath, size } = checkCreateFileInputs() || {}
 
@@ -56,7 +56,7 @@ async function write(filePath = FILE_NAME, transformedData, fileSize = 10) {
 
     transformedData.write(
       'cdatetime, address, district, beat, grid, crimedescr, ucr_ncic_code, latitude, longitude' +
-      '\r\n'
+        '\r\n'
     )
 
     setTimeout(async () => {
