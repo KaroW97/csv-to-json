@@ -7,7 +7,7 @@ const { checkIfExists } = require('../utils/common')
 const { checkCreateFileInputs } = require('../utils/validation')
 const { FileCreationError, BadRequest } = require('../utils/error')
 const { loggerSuccess } = require('../utils/logger')
-let child = fork('bigFileCreator/child')
+let child = fork(__dirname + '/child')
 
 child.setMaxListeners(50)
 
@@ -46,26 +46,28 @@ async function write(filePath = FILE_NAME, transformedData, fileSize = 10) {
  * We need to use setTimeout to wait till the file is created
  * Else we will get error
  */
-;(async () => {
+; (async () => {
   try {
     const { filePath, size } = checkCreateFileInputs() || {}
 
-    let transformedData = fs.createWriteStream(filePath ?? FILE_NAME, {
-      flags: 'a'
-    })
+    const file = filePath ?? FILE_NAME
+
+    let transformedData = fs.createWriteStream(file, { flags: 'a' })
 
     transformedData.write(
       'cdatetime, address, district, beat, grid, crimedescr, ucr_ncic_code, latitude, longitude' +
-        '\r\n'
+      '\r\n'
     )
 
     setTimeout(async () => {
-      const ifExists = await checkIfExists(filePath ?? FILE_NAME)
+
+
+      const ifExists = await checkIfExists(file)
 
       if (ifExists) {
-        await write(filePath, transformedData, size)
+        await write(file, transformedData, size)
 
-        loggerSuccess(filePath ?? FILE_NAME)
+        loggerSuccess(file)
       }
     }, 1000)
   } catch (err) {

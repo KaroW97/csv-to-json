@@ -10,7 +10,7 @@ const { validation } = require('../utils/validation')
  * @returns {Promise}
  */
 const transformToJSON = () => {
-  const compute = fork('csvToJSON/processFile.js')
+  const compute = fork(__dirname + '/processFile.js')
 
   compute.send(getUserInputs())
 
@@ -20,18 +20,18 @@ const transformToJSON = () => {
   })
 }
 
-/**
- * Core function, manages the flow in module
- */
-;(async () => {
-  try {
-    await validation()
+  /**
+   * Core function, manages the flow in module
+   */
+  ; (async () => {
+    try {
+      await validation()
 
-    await transformToJSON()
+      await transformToJSON()
 
-    loggerSuccess(getAllInputs()[3])
-  } catch (err) {
-    if (!(err instanceof BadRequest)) throw new FileCreationError()
-    throw err
-  }
-})()
+      loggerSuccess(getAllInputs()[3])
+    } catch (err) {
+      if (!(err instanceof BadRequest)) throw new FileCreationError()
+      throw err
+    }
+  })()

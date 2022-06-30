@@ -1,5 +1,7 @@
-if (process.title.includes('csv-to-json')) require('./csvToJSON/csvParser')
+const callFunction = process.argv.splice(2)[0]
 
-if (process.title === 'random-big-file') require('./bigFileCreator/bigFile')
+if (callFunction.includes('csv-to-json')) require('./csvToJSON/csvParser')
 
-if (process.title === 'save-google-drive') require('./google/googleApi')
+if (callFunction.includes('random-big-file')) require('./bigFileCreator/bigFile')
+
+if (callFunction.includes('save-google-drive')) require('./google/googleApi')
