@@ -1,66 +1,72 @@
-const fs = require('fs');
-require('dotenv').config();
-const { google } = require('googleapis');
-const { loggerSuccess } = require('./logger');
-const { checkIfExists } = require('../utils/common');
-const { GoogleAuth } = require('google-auth-library');
-const { FileError, resolveError } = require('./error');
+const fs = require('fs')
+require('dotenv').config()
+const { google } = require('googleapis')
+const { resolveError } = require('./innerErrors')
+const { loggerSuccess } = require('../utils/logger')
+const { GoogleAuth } = require('google-auth-library')
+const { checkGoogleInputs } = require('../utils/validation')
 
-const { KEY_FILE_PATH, SCOPE } = process.env;
+const { KEY_FILE_PATH, SCOPE, GOOGLE_FILE_ID } = process.env
 
-const createResources = (filePath) => {
-
-  const fileSplit = filePath.split('/')
-
-  const fileName = fileSplit[fileSplit.length - 1]
+/**
+ * Function creates inputs needed by google drive to upload data
+ * @param {Record<string, string>} param0
+ * @returns  Object with fields fileMetaData and media
+ */
+const createResources = ({ filePath, mimeType }) => {
+  const fileName = filePath.split('/').splice(-1)
 
   let fileMetaData = {
-    'name': fileName,
-    'parents': ['1Vc9bighvMvkJm6O-a4OsEBzd_8qxDTcf']
+    name: fileName,
+    parents: [GOOGLE_FILE_ID]
   }
+
   let media = {
-    mimeType: 'text/csv',
-    body: fs.createReadStream(filePath),
+    mimeType,
+    body: fs.createReadStream(filePath)
   }
-  return {
-    fileMetaData,
-    media
-  }
+
+  return { fileMetaData, media }
 }
 
+/**
+ * Authorize user
+ * @returns {GoogleApis}
+ */
 const authorize = () => {
   const auth = new GoogleAuth({
     scopes: [SCOPE],
-    keyFile: KEY_FILE_PATH,
+    keyFile: KEY_FILE_PATH
   })
 
-  return google.drive({ version: 'v3', auth });
+  return google.drive({ version: 'v3', auth })
 }
 
-(async () => {
-  const filePath = process.argv.slice(2)[0]
-
-  const service = authorize()
-
+/**
+ * Core function, manages the flow in module. Receives data provided by user
+ * Then tries to do the authorization. Tries to access a file
+ * And then creates file in the google drive.
+ */
+;(async () => {
   try {
-    const check = await checkIfExists(filePath)
+    console.time('TEST')
+    const googleInputs = (await checkGoogleInputs()) || {}
 
-    if (!check) throw new FileError(filePath)
+    const service = authorize()
 
-    const { fileMetaData, media } = createResources(filePath)
+    const { fileMetaData, media } = createResources(googleInputs)
 
-    const file = await service.files.create({
+    await service.files.create({
       resource: fileMetaData,
       media: media,
-      fields: 'id',
+      fields: 'id'
     })
 
-    const fileId = await service.files.get({ fileId: fileMetaData.parents[0] });
+    const fileId = await service.files.get({ fileId: fileMetaData.parents[0] })
 
-    loggerSuccess(file.status, fileId.data.name)
-
+    loggerSuccess(fileId.data.name)
+    console.timeEnd('TEST')
   } catch (err) {
-
     resolveError(err)
   }
 })()

@@ -1,4 +1,4 @@
-const { Chance } = require('chance');
+const { Chance } = require('chance')
 const chance = Chance()
 
 /**
@@ -9,7 +9,10 @@ const createRandomRow = () => {
   let tempArray = []
 
   for (let i = 0; i < 9e4; i++) {
-    const date = chance.date({ string: true }) + ' ' + chance.date().toISOString().split('.')[0].split('T')[1]
+    const date =
+      chance.date({ string: true }) +
+      ' ' +
+      chance.date().toISOString().split('.')[0].split('T')[1]
     const address = chance.address()
     const district = chance.natural({ min: 1, max: 20 })
     const beat = district + chance.letter()
@@ -19,7 +22,21 @@ const createRandomRow = () => {
     const latitude = chance.latitude()
     const longitude = chance.longitude()
 
-    tempArray.push([date, address, district, beat, grid, crimedescr, ucr_ncic_code, latitude, longitude].join(', ').toUpperCase() + '\r\n')
+    tempArray.push(
+      [
+        date,
+        address,
+        district,
+        beat,
+        grid,
+        crimedescr,
+        ucr_ncic_code,
+        latitude,
+        longitude
+      ]
+        .join(', ')
+        .toUpperCase() + '\r\n'
+    )
   }
   return tempArray.join('')
 }
@@ -29,6 +46,5 @@ process.on('message', (whenToClose) => {
 
   process.send(response)
 
-  if (whenToClose === true)
-    process.exit()
+  if (whenToClose === true) process.exit()
 })

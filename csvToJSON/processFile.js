@@ -1,5 +1,5 @@
-const fs = require('fs');
-const { transform, setInitialSeparator } = require('./transform');
+const fs = require('fs')
+const { transform, setInitialSeparator } = require('./transform')
 
 /**
  * Function creates new file after some manipulations on the old one are done
@@ -7,15 +7,13 @@ const { transform, setInitialSeparator } = require('./transform');
  * @returns {Promise}
  */
 const transformStream = async ({ inputPath, outputPath, separatorType }) => {
-
   //Create streams
   const fileStream = fs.createReadStream(inputPath, { encoding: 'utf-8' })
   const writeStream = fs.createWriteStream(outputPath, { flags: 'a' })
 
   //Checks if separatorType was given
   //If so, function is called and value is passed to the class instance
-  if (separatorType)
-    setInitialSeparator(separatorType)
+  if (separatorType) setInitialSeparator(separatorType)
 
   //transaction between readStream and writeStream
   fileStream.pipe(transform).pipe(writeStream)
@@ -23,7 +21,7 @@ const transformStream = async ({ inputPath, outputPath, separatorType }) => {
   //Resolve when writeStream close or reject if error
   return new Promise((resolve, rejects) => {
     writeStream.on('close', async () => resolve(true))
-    writeStream.on('error', error => rejects(error))
+    writeStream.on('error', (error) => rejects(error))
   })
 }
 

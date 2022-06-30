@@ -1,11 +1,11 @@
 {
   "name": "csv-to-json",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "description": "cSV to JSON parser",
+  "main": "csvParser.js",
   "scripts": {
-    "csvToJson": "node app",
-    "bigFile": "node ./bigFileCreator/bigFile",
+    "csv-to-json": "node ./csvToJSON/csvParser",
+    "random-big-file": "node ./bigFileCreator/bigFile",
     "save-google-drive": "node ./google/googleApi",
     "lint": "eslint -c @eslintrc/.eslintrc.js **/*.js --fix"
   },

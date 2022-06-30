@@ -1,12 +1,13 @@
-const { Transform } = require("stream");
-const Parser = require("../utils/parser");
+const { Transform } = require('stream')
+const Parser = require('../utils/parser')
 const parser = new Parser()
 
 /**
  * Sets separatorType for future action
  * @param {string} separator
  */
-exports.setInitialSeparator = (separator) => parser.setSeparator(null, separator)
+exports.setInitialSeparator = (separator) =>
+  parser.setSeparator(null, separator)
 
 exports.transform = new Transform({
   writableObjectMode: true,
@@ -29,8 +30,7 @@ exports.transform = new Transform({
     const lastRow = rows[rows.length - 1]
 
     // Check if contains nextLine sign
-    if (!lastRow.endsWith('\n'))
-      parser.setUnprocessed(lastRow)
+    if (!lastRow.endsWith('\n')) parser.setUnprocessed(lastRow)
 
     // If its first iteration, set header and separator
     if (parser.getIfFirst()) {
@@ -45,10 +45,10 @@ exports.transform = new Transform({
     // Set first iteration to false
     parser.setIfFirst()
 
-    callback(null, stringify);
+    callback(null, stringify)
   },
 
   flush(callback) {
-    callback(null, "]")
+    callback(null, ']')
   }
-});
+})

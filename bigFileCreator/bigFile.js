@@ -1,9 +1,12 @@
-const fs = require('fs');
-const FILE_NAME = 'testBig.csv'
-const { fork } = require('child_process');
-const { checkIfExists } = require('../utils/common');
-const { checkExtension } = require('../utils/validation');
+const fs = require('fs')
+const os = require('os')
 
+const FILE_NAME = `C:/Users/${os.userInfo().username}/Desktop/randomFile.csv`
+const { fork } = require('child_process')
+const { checkIfExists } = require('../utils/common')
+const { checkCreateFileInputs } = require('../utils/validation')
+const { FileCreationError, BadRequest } = require('../utils/error')
+const { loggerSuccess } = require('../utils/logger')
 let child = fork('bigFileCreator/child')
 
 child.setMaxListeners(50)
@@ -16,48 +19,58 @@ child.setMaxListeners(50)
 const callChild = async (transformedData) => {
   child.send('start')
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     child.on('message', async (data) => resolve(transformedData.write(data)))
   })
 }
 
 /**
-* Function is responsible for writing to a file till it's size reaches expected range
+ * Function is responsible for writing to a file till it's size reaches expected range
  * After every iteration we check the size of the file
- * @param {string} fileName
+ * @param {string} filePath
  * @param {fs.WriteStream} transformedData
  */
-async function write(fileName = FILE_NAME, transformedData) {
-  let size = (await fs.promises.stat(fileName)).size
+async function write(filePath = FILE_NAME, transformedData, fileSize = 10) {
+  let size = (await fs.promises.stat(filePath)).size
 
-  while ((size / 1e6) <= 10000) {
+  while (size / 1e6 <= fileSize * 1000) {
     await callChild(transformedData)
 
-    size = (await fs.promises.stat(fileName)).size
+    size = (await fs.promises.stat(filePath)).size
   }
   child.send(true)
 }
 
 /**
- * Main function which initialize whole work.
+ * Core function, manages the flow in module.
  * We need to use setTimeout to wait till the file is created
  * Else we will get error
  */
-(async () => {
-  const fileName = process.argv.splice(2)[0]
+; (async () => {
+  try {
+    const { filePath, size } = checkCreateFileInputs() || {}
 
-  if (fileName)
-    checkExtension(fileName)
+    let transformedData = fs.createWriteStream(filePath ?? FILE_NAME, {
+      flags: 'a'
+    })
 
-  let transformedData = fs.createWriteStream(fileName ?? FILE_NAME, { flags: 'a' })
+    transformedData.write(
+      'cdatetime, address, district, beat, grid, crimedescr, ucr_ncic_code, latitude, longitude' +
+      '\r\n'
+    )
 
-  transformedData.write('cdatetime, address, district, beat, grid, crimedescr, ucr_ncic_code, latitude, longitude' + '\r\n')
+    setTimeout(async () => {
+      const ifExists = await checkIfExists(filePath ?? FILE_NAME)
 
-  setTimeout(async () => {
-    const ifExists = await checkIfExists(fileName ?? FILE_NAME)
+      if (ifExists) {
+        await write(filePath, transformedData, size)
 
-    if (ifExists)
-      await write(fileName, transformedData)
-
-  }, 1000)
+        loggerSuccess(filePath ?? FILE_NAME)
+      }
+    }, 1000)
+  } catch (err) {
+    console.log(err)
+    if (!(err instanceof BadRequest)) throw new FileCreationError(err.message)
+    throw err
+  }
 })()

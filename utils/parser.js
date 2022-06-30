@@ -1,4 +1,4 @@
-const { VALID_SEPARATORS } = require("./common")
+const { VALID_SEPARATORS } = require('./common')
 
 module.exports = class Parser {
   constructor() {
@@ -31,7 +31,7 @@ module.exports = class Parser {
    * @returns {string}
    */
   deleteBrackets(json) {
-    return JSON.stringify(json).replace(/[\[\]']+/g, '')
+    return JSON.stringify(json).replace(/[[\]']+/g, '')
   }
 
   /**
@@ -41,7 +41,7 @@ module.exports = class Parser {
    */
   createTempObject(rows) {
     const splitIfHeader = this.checkIfFirst ? rows.splice(1) : rows
-    return splitIfHeader.map(rowElement => rowElement.split(this.separator))
+    return splitIfHeader.map((rowElement) => rowElement.split(this.separator))
   }
 
   /**
@@ -54,7 +54,7 @@ module.exports = class Parser {
   parseToJSON(rows) {
     const rest = this.createTempObject(rows)
 
-    const json = rest.map(row => {
+    const json = rest.map((row) => {
       return this.header.reduce((prev, current, index) => {
         let value = undefined
         if (typeof row[index] === 'string') value = row[index].trim()
@@ -78,10 +78,12 @@ module.exports = class Parser {
    * @param {string | undefined} separatorType
    */
   setSeparator(header, separatorType = this.getSeparator()) {
-    let separatorIndex = 0;
+    let separatorIndex = 0
 
     if (!separatorType)
-      separatorIndex = VALID_SEPARATORS.findIndex(separators => header.includes(separators))
+      separatorIndex = VALID_SEPARATORS.findIndex((separators) =>
+        header.includes(separators)
+      )
 
     this.separator = separatorType ?? VALID_SEPARATORS[separatorIndex]
   }
