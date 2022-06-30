@@ -1,9 +1,10 @@
 {
-  "name": "csv-to-json",
+  "name": "csv-json-parser-module",
   "version": "1.0.0",
   "description": "cSV to JSON parser",
-  "main": "csvParser.js",
+  "main": "index.js",
   "scripts": {
+    "test": "node index.js",
     "csv-to-json": "node ./csvToJSON/csvParser",
     "random-big-file": "node ./bigFileCreator/bigFile",
     "save-google-drive": "node ./google/googleApi",
