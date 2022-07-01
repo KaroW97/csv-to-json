@@ -20,7 +20,7 @@ const transformStream = async ({ inputPath, outputPath, separatorType }) => {
 
   //Resolve when writeStream close or reject if error
   return new Promise((resolve, rejects) => {
-    writeStream.on('close', async () => resolve(true))
+    writeStream.on('close', () => resolve(true))
     writeStream.on('error', (error) => rejects(error))
   })
 }

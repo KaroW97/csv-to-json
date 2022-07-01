@@ -33,9 +33,9 @@ const isEmpty = (object) => Object.keys(object).length === 0
 /**
  * Checks if inputs provided by the user are correct
  */
-const validation = async () => {
+const validation = async (processArgv) => {
   const [input, inputPath, output, outputPath, separator, separatorType] =
-    getAllInputs()
+    getAllInputs(processArgv)
 
   // Check if file exists
   const check = await checkIfExists(inputPath)
@@ -97,8 +97,8 @@ const checkExtension = (fileName, mimeType = true, explicitType) => {
  * Then it returns filePath and mime type
  * @returns {Record<string, string>}
  */
-const checkGoogleInputs = async () => {
-  const inputs = parseUserInput() || {}
+const checkGoogleInputs = async (processArgv) => {
+  const inputs = parseUserInput(processArgv) || {}
 
   // Check if created object is empty
   if (isEmpty(inputs)) throw new ParameterError('filePath', true)
@@ -126,9 +126,9 @@ const checkGoogleInputs = async () => {
  * Then checks if extension is in scope
  * @returns {Record<string,string>}
  */
-const checkCreateFileInputs = () => {
+const checkCreateFileInputs = (processArgv) => {
   // Create object of inputs
-  const inputs = parseUserInput() || {}
+  const inputs = parseUserInput(processArgv) || {}
 
   // If empty return
   if (isEmpty(inputs)) return
@@ -139,8 +139,6 @@ const checkCreateFileInputs = () => {
       throw new ParameterError(validParamsForCreateFile.join(' or '))
   })
 
-  //const changed = changeBackSlash(inputs.filePath)
-  //console.log(changed);
   // Check extension
   if (inputs.filePath) checkExtension(inputs.filePath, false, 'csv')
 

@@ -46,9 +46,10 @@ async function write(filePath = FILE_NAME, transformedData, fileSize = 10) {
  * We need to use setTimeout to wait till the file is created
  * Else we will get error
  */
-; (async () => {
+
+const bigFile = async (processArgv) => {
   try {
-    const { filePath, size } = checkCreateFileInputs() || {}
+    const { filePath, size } = checkCreateFileInputs(processArgv) || {}
 
     const file = filePath ?? FILE_NAME
 
@@ -56,12 +57,10 @@ async function write(filePath = FILE_NAME, transformedData, fileSize = 10) {
 
     transformedData.write(
       'cdatetime, address, district, beat, grid, crimedescr, ucr_ncic_code, latitude, longitude' +
-      '\r\n'
+        '\r\n'
     )
 
     setTimeout(async () => {
-
-
       const ifExists = await checkIfExists(file)
 
       if (ifExists) {
@@ -71,8 +70,14 @@ async function write(filePath = FILE_NAME, transformedData, fileSize = 10) {
       }
     }, 1000)
   } catch (err) {
-    console.log(err)
+    if (err instanceof TypeError) throw err
     if (!(err instanceof BadRequest)) throw new FileCreationError(err.message)
     throw err
   }
-})()
+}
+
+if (process.env.NODE_ENV && process.env.NODE_ENV.trim() == 'development') {
+  bigFile(process.argv)
+}
+
+module.exports = bigFile

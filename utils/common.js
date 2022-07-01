@@ -6,14 +6,19 @@ const VALID_SEPARATORS = ['  ', ',', ';']
  * Returns all input provided in console
  * @returns {string[]}
  */
-const getAllInputs = () => process.argv.slice(2) || {}
+const getAllInputs = (processArgv) => {
+  if (processArgv.slice(2)[0] === '--') return processArgv.slice(3) || {}
+  return processArgv.slice(2) || {}
+}
 
 /**
  * Returns values for provided flags
  * @returns {Record<string, string>}
  */
-const getUserInputs = () => {
-  const userInputs = getAllInputs().filter((element, index) => index % 2 == 1)
+const getUserInputs = (processArgv) => {
+  const userInputs = getAllInputs(processArgv).filter(
+    (element, index) => index % 2 == 1
+  )
 
   return {
     inputPath: userInputs[0],
@@ -40,8 +45,8 @@ const checkIfExists = async (fileName) => {
  * Returns Object of splitted user inputs
  * @returns {Record<string, string>}
  */
-const parseUserInput = () => {
-  return process.argv.slice(2).reduce((prev, current) => {
+const parseUserInput = (processArgv) => {
+  return processArgv.slice(2).reduce((prev, current) => {
     const split = current.split('=')
     return {
       ...prev,

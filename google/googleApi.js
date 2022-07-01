@@ -47,10 +47,9 @@ const authorize = () => {
  * Then tries to do the authorization. Tries to access a file
  * And then creates file in the google drive.
  */
-;(async () => {
+const googleApi = async (processArgv) => {
   try {
-    console.time('TEST')
-    const googleInputs = (await checkGoogleInputs()) || {}
+    const googleInputs = (await checkGoogleInputs(processArgv)) || {}
 
     const service = authorize()
 
@@ -65,8 +64,13 @@ const authorize = () => {
     const fileId = await service.files.get({ fileId: fileMetaData.parents[0] })
 
     loggerSuccess(fileId.data.name)
-    console.timeEnd('TEST')
   } catch (err) {
     resolveError(err)
   }
-})()
+}
+
+if (process.env.NODE_ENV && process.env.NODE_ENV.trim() == 'development') {
+  googleApi(process.argv)
+}
+
+module.exports = googleApi

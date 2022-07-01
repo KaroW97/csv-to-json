@@ -7,14 +7,13 @@ module.exports = class Parser {
     this.checkIfFirst = true
     this.unprocessed = ''
   }
-
   /**
    * Splitting string to an array of strings
    * @param {string} data
    * @returns {string[]}
    */
   splitToRows(data) {
-    return data.split('\n')
+    return data.split('\n').filter((e) => e != '\r' && e != '')
   }
 
   /**
@@ -31,7 +30,7 @@ module.exports = class Parser {
    * @returns {string}
    */
   deleteBrackets(json) {
-    return JSON.stringify(json).replace(/[[\]']+/g, '')
+    return JSON.stringify(json, null, 2).replace(/[[\]']+/g, '')
   }
 
   /**
