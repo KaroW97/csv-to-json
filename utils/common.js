@@ -7,6 +7,7 @@ const VALID_SEPARATORS = ['  ', ',', ';']
  * @returns {string[]}
  */
 const getAllInputs = (processArgv) => {
+  // Added as when calling from module itself the -- are required to make module work
   if (processArgv.slice(2)[0] === '--') return processArgv.slice(3) || {}
   return processArgv.slice(2) || {}
 }

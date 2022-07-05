@@ -33,10 +33,15 @@ const callChild = async (transformedData) => {
 async function write(filePath = FILE_NAME, transformedData, fileSize = 10) {
   let size = (await fs.promises.stat(filePath)).size
 
-  while (size / 1e6 <= fileSize * 1000) {
+  while (size / (1024 * 1024) <= fileSize * 1000) {
     await callChild(transformedData)
 
     size = (await fs.promises.stat(filePath)).size
+
+    if (child.listenerCount('message') === child.getMaxListeners()) {
+      child.send(true)
+      child = fork(__dirname + '/child')
+    }
   }
   child.send(true)
 }
@@ -57,7 +62,7 @@ const bigFile = async (processArgv) => {
 
     transformedData.write(
       'cdatetime, address, district, beat, grid, crimedescr, ucr_ncic_code, latitude, longitude' +
-        '\r\n'
+      '\r\n'
     )
 
     setTimeout(async () => {
