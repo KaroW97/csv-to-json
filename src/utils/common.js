@@ -7,9 +7,12 @@ const VALID_SEPARATORS = ['  ', ',', ';']
  * @returns {string[]}
  */
 const getAllInputs = (processArgv) => {
+  const args = processArgv || null
+
+  if (!args) return []
   // Added as when calling from module itself the -- are required to make module work
-  if (processArgv.slice(2)[0] === '--') return processArgv.slice(3) || {}
-  return processArgv.slice(2) || {}
+  if (args.slice(2)[0] === '--') return args.slice(3)
+  return args.slice(2)
 }
 
 /**
@@ -47,7 +50,8 @@ const checkIfExists = async (fileName) => {
  * @returns {Record<string, string>}
  */
 const parseUserInput = (processArgv) => {
-  return processArgv.slice(2).reduce((prev, current) => {
+  const spliced = getAllInputs(processArgv)
+  return spliced.reduce((prev, current) => {
     const split = current.split('=')
     return {
       ...prev,

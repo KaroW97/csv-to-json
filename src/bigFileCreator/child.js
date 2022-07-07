@@ -8,7 +8,7 @@ const chance = Chance()
 const createRandomRow = () => {
   let tempArray = []
 
-  for (let i = 0; i < 2e4; i++) {
+  for (let i = 0; i < 10; i++) {
     const date =
       chance.date({ string: true }) +
       ' ' +

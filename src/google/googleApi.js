@@ -55,6 +55,7 @@ const googleApi = async (processArgv) => {
 
     const { fileMetaData, media } = createResources(googleInputs)
 
+
     await service.files.create({
       resource: fileMetaData,
       media: media,
@@ -69,8 +70,7 @@ const googleApi = async (processArgv) => {
   }
 }
 
-if (process.env.NODE_ENV && process.env.NODE_ENV.trim() == 'development') {
+if (process.env.NODE_ENV && process.env.NODE_ENV.trim() == 'development')
   googleApi(process.argv)
-}
 
 module.exports = googleApi

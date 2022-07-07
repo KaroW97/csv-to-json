@@ -3,11 +3,22 @@
   "version": "1.0.3",
   "description": "CSV to JSON parser",
   "main": "index.js",
+  "keywords": [
+    "csv",
+    "json",
+    "csvtojson",
+    "parser",
+    "converter",
+    "googleapis",
+    "JavaScript",
+    "dummyCsvCreator"
+  ],
   "scripts": {
-    "csv-to-json": "set NODE_ENV=development && node ./csvToJSON/csvParser ",
-    "random-big-file": "set NODE_ENV=development && node ./bigFileCreator/bigFile",
-    "save-google-drive": "set NODE_ENV=development && node google/googleApi.js",
-    "lint": "eslint -c @eslintrc/.eslintrc.js **/*.js --fix"
+    "csv-to-json": "set NODE_ENV=development && node ./src/csvToJSON/csvParser ",
+    "random-big-file": "set NODE_ENV=development && node ./src/bigFileCreator/bigFile",
+    "save-google-drive": "set NODE_ENV=development && node ./src/google/googleApi.js",
+    "lint": "eslint -c @eslintrc/.eslintrc.js **/*.js --fix",
+    "test": "jest --config jest.config.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +36,11 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "google-auth-library": "^8.0.3",
-    "googleapis": "^104.0.0"
+    "googleapis": "^104.0.0",
+    "sinon": "^14.0.0"
+  },
+  "devDependencies": {
+    "jest": "^28.1.2",
+    "rewire": "^6.0.0"
   }
 }

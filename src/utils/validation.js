@@ -34,8 +34,12 @@ const isEmpty = (object) => Object.keys(object).length === 0
  * Checks if inputs provided by the user are correct
  */
 const validation = async (processArgv) => {
+  // console.log(processArgv);
   const [input, inputPath, output, outputPath, separator, separatorType] =
     getAllInputs(processArgv)
+  //console.log(getAllInputs(processArgv));
+  // Check first if input path provided
+  if (!inputPath) throw new BadRequest('No input path provided')
 
   // Check if file exists
   const check = await checkIfExists(inputPath)
@@ -46,19 +50,19 @@ const validation = async (processArgv) => {
   //checks if extension is csv
   checkExtension(inputPath, false, 'csv')
 
+  // Check first if output path provided
+  if (!outputPath) throw new BadRequest('No output path provided')
+
   //checks if extension is json
   checkExtension(outputPath, false, 'json')
 
   if (input !== accepted.sourceFile || output !== accepted.resultFile)
     throw new BadRequest(
-      `The tag is incorrect expected ${
-        !input ? accepted.sourceFile : accepted.resultFile
+      `The tag is incorrect expected ${input !== accepted.sourceFile
+        ? accepted.sourceFile
+        : accepted.resultFile
       }`
     )
-
-  if (!inputPath) throw new BadRequest('No input path provided')
-
-  if (!outputPath) throw new BadRequest('No output path provided')
 
   if (separator && !separatorType)
     throw new BadRequest(
@@ -86,6 +90,7 @@ const checkExtension = (fileName, mimeType = true, explicitType) => {
   if (extensionIndex === -1)
     throw new WrongExtension('Expected extensions are json or csv')
 
+  // When explicitType extension is passed throw if file has different one
   if (explicitType && explicitType !== fileExtension[0])
     throw new WrongExtension(`Expected ${explicitType} file extension`)
 
@@ -98,7 +103,7 @@ const checkExtension = (fileName, mimeType = true, explicitType) => {
  * @returns {Record<string, string>}
  */
 const checkGoogleInputs = async (processArgv) => {
-  const inputs = parseUserInput(processArgv) || {}
+  const inputs = parseUserInput(processArgv)
 
   // Check if created object is empty
   if (isEmpty(inputs)) throw new ParameterError('filePath', true)
@@ -128,7 +133,7 @@ const checkGoogleInputs = async (processArgv) => {
  */
 const checkCreateFileInputs = (processArgv) => {
   // Create object of inputs
-  const inputs = parseUserInput(processArgv) || {}
+  const inputs = parseUserInput(processArgv)
 
   // If empty return
   if (isEmpty(inputs)) return
