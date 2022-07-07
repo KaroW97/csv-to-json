@@ -9,7 +9,7 @@ npm i csv-json-parser-module
 To invoke any module from **scripts** in package.json set
 
 ```
-set NODE_ENV=development && node node_modules/csv-json-parser-module/FOLDER_NAME/FILE_NAME
+set NODE_ENV=development && node node_modules/csv-json-parser-module/src/FOLDER_NAME/FILE_NAME
 ```
 then you can call module from the terminal with `npm run SCRIPT_NAME` command.
 
