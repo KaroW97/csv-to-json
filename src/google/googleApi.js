@@ -55,7 +55,6 @@ const googleApi = async (processArgv) => {
 
     const { fileMetaData, media } = createResources(googleInputs)
 
-
     await service.files.create({
       resource: fileMetaData,
       media: media,

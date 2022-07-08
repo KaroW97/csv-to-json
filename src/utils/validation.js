@@ -34,10 +34,9 @@ const isEmpty = (object) => Object.keys(object).length === 0
  * Checks if inputs provided by the user are correct
  */
 const validation = async (processArgv) => {
-  // console.log(processArgv);
   const [input, inputPath, output, outputPath, separator, separatorType] =
     getAllInputs(processArgv)
-  //console.log(getAllInputs(processArgv));
+
   // Check first if input path provided
   if (!inputPath) throw new BadRequest('No input path provided')
 

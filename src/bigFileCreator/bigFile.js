@@ -66,7 +66,7 @@ const bigFile = async (processArgv) => {
     )
 
     setTimeout(async () => {
-      console.log('JESTEM');
+
       const ifExists = await checkIfExists(file)
 
       if (ifExists) {

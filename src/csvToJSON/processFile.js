@@ -7,7 +7,6 @@ const { transform, setInitialSeparator } = require('./transform')
  * @returns {Promise}
  */
 const transformStream = async ({ inputPath, outputPath, separatorType }) => {
-  console.log({ inputPath, outputPath, separatorType });
   //Create streams
   const fileStream = fs.createReadStream(inputPath, { encoding: 'utf-8' })
   const writeStream = fs.createWriteStream(outputPath, { flags: 'a' })
@@ -26,7 +25,7 @@ const transformStream = async ({ inputPath, outputPath, separatorType }) => {
   })
 }
 
-('message', async (inputs) => {
+process.on('message', async (inputs) => {
   const data = await transformStream(inputs)
   process.send(data)
   process.exit()
