@@ -1,6 +1,6 @@
 {
   "name": "csv-json-parser-module",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "CSV to JSON parser",
   "main": "index.js",
   "keywords": [

@@ -1,6 +1,6 @@
-const bigFile = require('./bigFileCreator/bigFile')
-const csvParser = require('./csvToJSON/csvParser')
-const googleApi = require('./google/googleApi')
+const bigFile = require('./src/bigFileCreator/bigFile')
+const csvParser = require('./src/csvToJSON/csvParser')
+const googleApi = require('./src/google/googleApi')
 
 module.exports = {
   bigFile,
