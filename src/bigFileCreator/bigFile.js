@@ -76,7 +76,6 @@ const bigFile = async (processArgv) => {
       }
     }, 1000)
   } catch (err) {
-    if (err instanceof TypeError) throw err
     if (!(err instanceof BadRequest)) throw new FileCreationError(err.message)
     throw err
   }

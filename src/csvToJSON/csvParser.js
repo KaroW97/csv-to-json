@@ -32,7 +32,6 @@ const csvParser = async (processArgv) => {
 
     loggerSuccess(getAllInputs(processArgv)[3])
   } catch (err) {
-    if (err instanceof TypeError) throw err
     if (!(err instanceof BadRequest)) throw new FileCreationError()
     throw err
   }

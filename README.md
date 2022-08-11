@@ -88,8 +88,8 @@ The process needs to be stopped explicitly else it won't break by itself
 ### Example Calls
 
 ```
-node index --sourceFile "YOUR_INPUT" --resultFile "YOUR_OUTPUT" --separator "SEPARATOR"
-node index --sourceFile "YOUR_INPUT" --resultFile "YOUR_OUTPUT"
+node index -- --sourceFile "YOUR_INPUT" --resultFile "YOUR_OUTPUT" --separator "SEPARATOR"
+node index -- --sourceFile "YOUR_INPUT" --resultFile "YOUR_OUTPUT"
 ```
 
 ---
